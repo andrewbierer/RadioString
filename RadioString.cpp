@@ -154,23 +154,20 @@ void RadioString::Receive_String(String &MESSAGE_STRING, uint16_t PacketTimeout,
         Serial.print(PACKET_COUNT);
         Serial.print(F(" of "));
         Serial.println(PACKET_NUM);
-        PACKET_COUNT ++;
         if(PACKET_NUM == 1){ //Reset NUM and COUNT if only 1 packet is received.
-          PACKET_NUM == 0;
-          PACKET_COUNT == 0;
+          PACKET_NUM = 0;
+          PACKET_COUNT = 0;
         }
         //  Serial.print(F("Current String:  "));
         //  Serial.println(RECEIVED_STRING);
         //Can we block transmissions from other RECEIVE_ID's until all expected packets are received?
       } else if(PACKET_COUNT < PACKET_NUM && PACKET_COUNT != 0){
+        PACKET_COUNT ++;
         Serial.print(F("Packet  "));
         Serial.print(PACKET_COUNT);
         Serial.print(F(" of "));
         Serial.println(PACKET_NUM);
         RECEIVED_STRING += (char*)RECEIVE_BUFFER;
-        PACKET_COUNT ++;
-        //  Serial.print(F("Current String:  "));
-        //  Serial.println(RECEIVED_STRING);
       } else if (PACKET_COUNT == PACKET_NUM && PACKET_COUNT != 0) {
         Serial.print(F("Packet  "));
         Serial.print(PACKET_COUNT);
