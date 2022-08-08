@@ -3,6 +3,7 @@ RadioString.cpp - Sending long data Strings via RHReliableDatagram
 Author: Dr. Andrew M. Bierer andrew.bierer@usda.gov
 (License here) 2022 Andrew Bierer
 Version history:
+2022-08-08 V. 1.1 - Proper handling of single packet transmission counts.
 2022-06-16 V. 1.0
 */
 
