@@ -1,10 +1,9 @@
 /*
 RadioString.cpp - Sending long data Strings via RHReliableDatagram
-
 Author: Dr. Andrew M. Bierer andrew.bierer@usda.gov
 (License here) 2022 Andrew Bierer
-
 Version history:
+2022-08-08 V. 1.1 - Proper handling of single packet transmission counts.
 2022-06-16 V. 1.0
 */
 
@@ -154,17 +153,39 @@ void RadioString::Receive_String(String &MESSAGE_STRING, uint16_t PacketTimeout,
         Serial.print(PACKET_COUNT);
         Serial.print(F(" of "));
         Serial.println(PACKET_NUM);
-        PACKET_COUNT ++;
+        //PACKET_COUNT ++;
+        if(PACKET_NUM == 1){ //To do if only 1 packet is received.
+          Serial.println(F("This should be the complete String."));
+          //if the buffer contains the end character ']'
+          RECEIVED_STRING += (char*)RECEIVE_BUFFER;
+
+          //Print and set the entire RECEIVED_STRING equal to the String input in the function (declared global in sketch)
+          Serial.print(F("Reconstructed String: "));
+          Serial.println(RECEIVED_STRING);
+          MESSAGE_STRING = RECEIVED_STRING;
+          //Print Transmission strength information
+          Serial.print(F("RSSI: ")); //Recieved Signal Strength Inidicator (RSSI) measures amount of power present in radio signal. A greater negative value indicates a weaker signal.
+          Serial.println(_driver.lastRssi(), DEC);
+
+          Serial.print(F("SNR:  "));  //Signal to noise ratio (SNR), a useful indicator of impending link failure.
+          Serial.println(RHRF95->lastSNR(), DEC);
+
+          delay(10);
+          RECEIVED_STRING = "";
+          PACKET_NUM = 0;
+          PACKET_COUNT = 0;
+        }
         //  Serial.print(F("Current String:  "));
         //  Serial.println(RECEIVED_STRING);
         //Can we block transmissions from other RECEIVE_ID's until all expected packets are received?
       } else if(PACKET_COUNT < PACKET_NUM && PACKET_COUNT != 0){
+                PACKET_COUNT ++;
         Serial.print(F("Packet  "));
         Serial.print(PACKET_COUNT);
         Serial.print(F(" of "));
         Serial.println(PACKET_NUM);
         RECEIVED_STRING += (char*)RECEIVE_BUFFER;
-        PACKET_COUNT ++;
+
         //  Serial.print(F("Current String:  "));
         //  Serial.println(RECEIVED_STRING);
       } else if (PACKET_COUNT == PACKET_NUM && PACKET_COUNT != 0) {
